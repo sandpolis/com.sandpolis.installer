@@ -1,0 +1,3 @@
+[submodule "sandpolis"]
+	path = sandpolis
+	url = ssh://git@github.com/sandpolis/sandpolis
