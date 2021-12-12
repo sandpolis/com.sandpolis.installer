@@ -22,6 +22,6 @@ module com.sandpolis.installer {
 	requires javafx.fxml;
 	requires javafx.graphics;
 	requires org.slf4j;
-	requires qrcodegen;
+	requires io.nayuki.qrcodegen;
 	requires static mslinks;
 }
