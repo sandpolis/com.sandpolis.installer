@@ -48,7 +48,7 @@ dependencies {
 	implementation("io.nayuki:qrcodegen:1.7.0")
 
 	// https://github.com/FasterXML/jackson-databind
-	implementation("com.fasterxml.jackson.core:jackson-databind:2.12.4")
+	implementation("com.fasterxml.jackson.core:jackson-databind:2.13.0")
 
 	if (project.getParent() == null) {
 		implementation("com.sandpolis:core.foundation:+")
