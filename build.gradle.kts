@@ -45,7 +45,7 @@ dependencies {
 	testImplementation("org.awaitility:awaitility:4.0.1")
 
 	// https://github.com/nayuki/QR-Code-generator
-	implementation("io.nayuki:qrcodegen:1.6.0")
+	implementation("io.nayuki:qrcodegen:1.7.0")
 
 	if (project.getParent() == null) {
 		implementation("com.sandpolis:core.foundation:+")
