@@ -32,18 +32,6 @@ import java.util.stream.Stream;
  */
 public final class Main {
 
-	public static final boolean IS_WINDOWS;
-	public static final boolean IS_LINUX;
-	public static final boolean IS_MAC;
-
-	static {
-		String name = System.getProperty("os.name").toLowerCase();
-
-		IS_WINDOWS = name.startsWith("windows");
-		IS_LINUX = name.startsWith("linux");
-		IS_MAC = name.startsWith("mac") || name.startsWith("darwin");
-	}
-
 	/**
 	 * The version to install.
 	 */

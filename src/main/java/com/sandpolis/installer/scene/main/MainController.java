@@ -19,9 +19,9 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sandpolis.core.foundation.util.RandUtil;
+import com.sandpolis.core.foundation.S7SRandom;
+import com.sandpolis.installer.InstallTask;
 import com.sandpolis.installer.Main;
-import com.sandpolis.installer.task.GuiInstallTask;
 import com.sandpolis.installer.util.CloudUtil;
 import com.sandpolis.installer.util.QrUtil;
 
@@ -102,7 +102,7 @@ public class MainController {
 		} else if (!o && n) {
 			qrTask = service.submit(() -> {
 				do {
-					String token = RandUtil.nextAlphabetic(32).toUpperCase();
+					String token = S7SRandom.nextAlphabetic(32).toUpperCase();
 					Node node = QrUtil.buildQr(token, qr_box.widthProperty(), qr_box.heightProperty(), Color.BLACK);
 					Platform.runLater(() -> {
 						qr_box.getChildren().setAll(node);
@@ -192,23 +192,23 @@ public class MainController {
 		Main.PATH.evaluate().ifPresent(base -> {
 			// Add installer tasks to the queue
 			if (chk_client_lifegem.isSelected()) {
-				install(pane_client_lifegem, GuiInstallTask.newClientLifegemTask(base.resolve("client-gui")));
+				install(pane_client_lifegem, InstallTask.newClientLifegemTask(base.resolve("client-gui")));
 			} else {
 				pane_client_lifegem.setCollapsible(false);
 			}
 			if (chk_client_ascetic.isSelected()) {
-				install(pane_client_ascetic, GuiInstallTask.newClientAsceticTask(base.resolve("client-cli")));
+				install(pane_client_ascetic, InstallTask.newClientAsceticTask(base.resolve("client-cli")));
 			} else {
 				pane_client_ascetic.setCollapsible(false);
 			}
 			if (chk_server.isSelected()) {
 				install(pane_server,
-						GuiInstallTask.newServerTask(base.resolve("server"), username.getText(), password.getText()));
+						InstallTask.newServerTask(base.resolve("server"), username.getText(), password.getText()));
 			} else {
 				pane_server.setCollapsible(false);
 			}
 			if (chk_client.isSelected()) {
-				install(pane_client, GuiInstallTask.newClientTask(base.resolve("client"), client_config));
+				install(pane_client, InstallTask.newClientTask(base.resolve("client"), client_config));
 			} else {
 				pane_client.setCollapsible(false);
 			}
@@ -228,7 +228,7 @@ public class MainController {
 		});
 	}
 
-	private void install(TitledPane section, GuiInstallTask installer) {
+	private void install(TitledPane section, InstallTask installer) {
 
 		ProgressIndicator progress = new ProgressIndicator(0.0);
 		installer.setOnScheduled(event -> {

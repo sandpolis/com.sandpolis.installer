@@ -15,6 +15,7 @@ module com.sandpolis.installer {
 	exports com.sandpolis.installer;
 
 	requires com.sandpolis.core.foundation;
+	requires com.sandpolis.core.integration.systemd;
 	requires java.net.http;
 	requires java.xml;
 	requires javafx.base;
@@ -23,5 +24,5 @@ module com.sandpolis.installer {
 	requires javafx.graphics;
 	requires org.slf4j;
 	requires io.nayuki.qrcodegen;
-	requires static mslinks;
+	requires com.fasterxml.jackson.databind;
 }

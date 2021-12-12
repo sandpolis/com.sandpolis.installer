@@ -8,7 +8,7 @@
 //                                                                            //
 //============================================================================//
 
-rootProject.name = "com.sandpolis.client.lifegem"
+rootProject.name = "com.sandpolis.installer"
 
 buildscript {
 	repositories {

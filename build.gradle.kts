@@ -45,14 +45,23 @@ dependencies {
 	testImplementation("org.awaitility:awaitility:4.0.1")
 
 	// https://github.com/nayuki/QR-Code-generator
-	implementation("io.nayuki:qrcodegen:1.6.0")
+	implementation("io.nayuki:qrcodegen:1.7.0")
+
+	// https://github.com/FasterXML/jackson-databind
+	implementation("com.fasterxml.jackson.core:jackson-databind:2.12.4")
 
 	if (project.getParent() == null) {
 		implementation("com.sandpolis:core.foundation:+")
 		implementation("com.sandpolis:core.integration.pacman:+")
+		implementation("com.sandpolis:core.integration.systemd:+")
+		implementation("com.sandpolis:core.integration.apt:+")
+		implementation("com.sandpolis:core.integration.launchd:+")
 	} else {
 		implementation(project(":core:com.sandpolis.core.foundation"))
 		implementation(project(":core:integration:com.sandpolis.core.integration.pacman"))
+		implementation(project(":core:integration:com.sandpolis.core.integration.systemd"))
+		implementation(project(":core:integration:com.sandpolis.core.integration.apt"))
+		implementation(project(":core:integration:com.sandpolis.core.integration.launchd"))
 	}
 
 	if (OperatingSystem.current().isMacOsX()) {
