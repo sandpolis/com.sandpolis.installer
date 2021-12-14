@@ -9,66 +9,252 @@
 //    https://mozilla.org/MPL/2.0                                             //
 //                                                                            //
 //=========================================================S A N D P O L I S==//
-package com.sandpolis.installer.task;
+package com.sandpolis.installer;
 
-import static com.sandpolis.installer.InstallComponent.AGENT_VANILLA;
-import static com.sandpolis.installer.InstallComponent.SERVER_VANILLA;
-import static com.sandpolis.installer.InstallComponent.CLIENT_ASCETIC;
-import static com.sandpolis.installer.InstallComponent.CLIENT_LIFEGEM;
+import static java.nio.file.attribute.PosixFilePermission.GROUP_EXECUTE;
+import static java.nio.file.attribute.PosixFilePermission.GROUP_READ;
+import static java.nio.file.attribute.PosixFilePermission.OTHERS_EXECUTE;
+import static java.nio.file.attribute.PosixFilePermission.OTHERS_READ;
+import static java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE;
+import static java.nio.file.attribute.PosixFilePermission.OWNER_READ;
+import static java.nio.file.attribute.PosixFilePermission.OWNER_WRITE;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
+import java.nio.file.Paths;
+import java.util.Set;
 
-import com.sandpolis.installer.platform.Installer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sandpolis.core.foundation.S7SJarFile;
+import com.sandpolis.core.foundation.S7SMavenArtifact;
+import com.sandpolis.core.foundation.S7SSystem;
+import com.sandpolis.core.integration.systemd.Systemctl;
+import com.sandpolis.core.integration.systemd.SystemdService;
 
 import javafx.concurrent.Task;
 
-/**
- * @author cilki
- * @since 5.0.0
- */
-public class GuiInstallTask extends Task<Void> {
+public class InstallTask extends Task<Void> {
 
-	private Installer installer;
+	private static final Path LINUX_DESKTOP_DIR_SYSTEM = Paths.get("/usr/share/applications");
 
-	private GuiInstallTask(Installer installer) {
-		this.installer = Objects.requireNonNull(installer);
-		this.installer.setStatusOutput(this::updateMessage);
-		this.installer.setProgressOutput(this::updateProgress);
+	private static final Path LINUX_DESKTOP_DIR_USER = Paths
+			.get(System.getProperty("user.home") + "/.local/share/applications");
 
+	private static final Path LINUX_BIN_DIR = Paths.get("/usr/local/bin");
+
+	private static final Path WINDOWS_START_DIR_SYSTEM = Paths
+			.get("C:/ProgramData/Microsoft/Windows/Start Menu/Programs");
+
+	private static final Path WINDOWS_START_DIR_USER = Paths
+			.get(System.getProperty("user.home") + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs");
+
+	/**
+	 * The component to install.
+	 */
+	private final S7SMavenArtifact component;
+
+	/**
+	 * The root directory for the installation.
+	 */
+	private final Path root;
+
+	private final boolean gui;
+
+	private boolean completed;
+
+	private InstallTask(boolean gui, S7SMavenArtifact component, Path root) {
 		updateProgress(0, 1);
+
+		this.gui = gui;
+		this.root = root;
+
+		if (component.version() == null) {
+			updateMessage("Downloading metadata");
+			try {
+				this.component = S7SMavenArtifact.of(component.groupId(), component.artifactId(),
+						component.getLatestVersion(), component.classifier());
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			this.component = component;
+		}
 	}
 
-	public static GuiInstallTask newServerTask(Path destination, String username, String password) {
-		var task = new GuiInstallTask(Installer.newPlatformInstaller(destination, SERVER_VANILLA));
-		task.installer.setUsername(username);
-		task.installer.setPassword(password);
-
-		return task;
+	private static String getPlatformClassifier() {
+		switch (S7SSystem.OS_TYPE) {
+		case WINDOWS:
+			return "windows";
+		case LINUX:
+			return "linux";
+		case MACOS:
+			return "macos";
+		default:
+			throw new RuntimeException();
+		}
 	}
 
-	public static GuiInstallTask newClientTask(Path destination, String config) {
-		var task = new GuiInstallTask(Installer.newPlatformInstaller(destination, AGENT_VANILLA));
-		task.installer.setConfig(config);
-
-		return task;
+	public static InstallTask newServerTask(Path root) {
+		return new InstallTask(false, S7SMavenArtifact.of("com.sandpolis", "server.vanilla", null), root);
 	}
 
-	public static GuiInstallTask newClientLifegemTask(Path destination) {
-		return new GuiInstallTask(Installer.newPlatformInstaller(destination, CLIENT_LIFEGEM));
+	public static InstallTask newServerTaskGui() {
+		return new InstallTask(true, S7SMavenArtifact.of("com.sandpolis", "server.vanilla", null), Paths.get("/"));
 	}
 
-	public static GuiInstallTask newClientAsceticTask(Path destination) {
-		return new GuiInstallTask(Installer.newPlatformInstaller(destination, CLIENT_ASCETIC));
+	public static InstallTask newClientLifegemTask(Path root) {
+		return new InstallTask(false,
+				S7SMavenArtifact.of("com.sandpolis", "client.lifegem", null, getPlatformClassifier()), root);
+	}
+
+	public static InstallTask newClientLifegemTaskGui() {
+		return new InstallTask(true,
+				S7SMavenArtifact.of("com.sandpolis", "client.lifegem", null, getPlatformClassifier()), Paths.get("/"));
+	}
+
+	public static InstallTask newClientAsceticTask(Path root) {
+		return new InstallTask(false, S7SMavenArtifact.of("com.sandpolis", "client.ascetic", null), root);
+	}
+
+	public static InstallTask newClientAsceticTaskGui() {
+		return new InstallTask(true, S7SMavenArtifact.of("com.sandpolis", "client.ascetic", null), Paths.get("/"));
+	}
+
+	public static InstallTask newAgentTask(Path root) {
+		return new InstallTask(false, S7SMavenArtifact.of("com.sandpolis", "agent.kilo", null), root);
+	}
+
+	public static InstallTask newAgentTaskGui() {
+		return new InstallTask(true, S7SMavenArtifact.of("com.sandpolis", "agent.kilo", null), Paths.get("/"));
 	}
 
 	@Override
 	protected Void call() throws Exception {
-		installer.run();
+
+		updateMessage("Executing installation for component: " + component.artifactId());
+
+		// Choose install directories
+		Path lib;
+		Path bin;
+
+		switch (S7SSystem.OS_TYPE) {
+		case WINDOWS:
+			// TODO
+			lib = null;
+			bin = null;
+			break;
+		default:
+			lib = root.resolve("/opt/lib");
+			bin = root.resolve(LINUX_BIN_DIR);
+			break;
+		}
+
+		Files.createDirectories(lib);
+
+		Path exe = lib.resolve(component.filename());
+
+		// Download executable
+		updateMessage("Downloading " + component.filename());
+		try (var in = component.download()) {
+			Files.copy(in, exe);
+		}
+
+		// Get dependencies from executable
+		var tree = S7SJarFile.of(exe)
+				.getResource("/config/com.sandpolis.build.json", in -> new ObjectMapper().readTree(in)).get();
+
+		long current = 0;
+		long total = tree.get("dependencies").size();
+
+		for (var element : tree.get("dependencies")) {
+			var module = S7SMavenArtifact.of(element.get("group").asText(), element.get("artifact").asText(),
+					element.get("version").asText(), element.get("classifier").asText());
+
+			Path dependency = lib.resolve(module.filename());
+			if (!Files.exists(dependency)) {
+				InputStream local = InstallTask.class.getResourceAsStream("/" + module.filename());
+				if (local != null) {
+					updateMessage("Extracting " + module.filename());
+					try (local) {
+						Files.copy(local, dependency);
+					}
+				} else {
+					updateMessage("Downloading " + module.filename());
+					try (var in = module.download()) {
+						Files.copy(in, dependency);
+					}
+				}
+			}
+
+			current++;
+			updateProgress(current, total);
+		}
+
+		// Install start script
+		switch (S7SSystem.OS_TYPE) {
+		case LINUX:
+			Files.writeString(lib.resolve("start"), """
+					#!/bin/sh
+					exec /usr/bin/java --module-path "%s" -m %s/%s.Main "%%@"
+					""".formatted());
+			Files.setPosixFilePermissions(lib.resolve("start"), Set.of(OWNER_READ, OWNER_WRITE, OWNER_EXECUTE,
+					GROUP_READ, GROUP_EXECUTE, OTHERS_READ, OTHERS_EXECUTE));
+			break;
+		case WINDOWS:
+			Files.writeString(lib.resolve("start.bat"), """
+					@echo off
+					start javaw --module-path "%s" -m %s/%s.Main
+					""".formatted());
+			break;
+		}
+
+		switch (component.artifactId()) {
+		case "server.vanilla":
+			if (Systemctl.isAvailable()) {
+				var service = SystemdService.of(config -> {
+					config.Type = SystemdService.Type.SIMPLE;
+				});
+
+				Systemctl.load().enable(service);
+			}
+			break;
+		case "client.lifegem":
+			switch (S7SSystem.OS_TYPE) {
+			case WINDOWS:
+				Files.write(lib.resolveSibling("Sandpolis.ico"),
+						S7SJarFile.of(exe).getResource("/image/icon.ico").get());
+				break;
+			default:
+				Files.write(lib.resolveSibling("Sandpolis.png"),
+						S7SJarFile.of(exe).getResource("/image/icon@4x.png").get());
+				break;
+			}
+			break;
+		}
+
+		completed = true;
 		return null;
 	}
 
 	public boolean isCompleted() {
-		return installer.isCompleted();
+		return completed;
+	}
+
+	@Override
+	protected void updateMessage(String message) {
+		if (gui) {
+			super.updateMessage(message);
+		} else {
+			System.out.println(message);
+		}
+	}
+
+	@Override
+	protected void updateProgress(double workDone, double max) {
+		if (gui) {
+			super.updateProgress(workDone, max);
+		}
 	}
 }

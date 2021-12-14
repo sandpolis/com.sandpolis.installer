@@ -110,9 +110,9 @@
 					</center>
 				</BorderPane>
 			</TitledPane>
-			<TitledPane fx:id="pane_client" text="Install Client">
+			<TitledPane fx:id="pane_client" text="Install Agent">
 				<graphic>
-					<CheckBox fx:id="chk_client" mnemonicParsing="false" />
+					<CheckBox fx:id="chk_agent" mnemonicParsing="false" />
 				</graphic>
 				<BorderPane>
 					<bottom>

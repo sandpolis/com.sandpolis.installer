@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import com.sandpolis.core.foundation.S7SRandom;
 import com.sandpolis.installer.InstallTask;
-import com.sandpolis.installer.Main;
 import com.sandpolis.installer.util.CloudUtil;
 import com.sandpolis.installer.util.QrUtil;
 
@@ -53,7 +52,7 @@ public class MainController {
 	@FXML
 	private CheckBox chk_client_ascetic;
 	@FXML
-	private CheckBox chk_client;
+	private CheckBox chk_agent;
 	@FXML
 	private TitledPane pane_server;
 	@FXML
@@ -93,7 +92,7 @@ public class MainController {
 	private ChangeListener<Boolean> refreshScene = (ObservableValue<? extends Boolean> p, Boolean o, Boolean n) -> {
 		// Ensure at least one box is checked
 		btn_install.setDisable((!chk_server.isSelected() && !chk_client_lifegem.isSelected()
-				&& !chk_client_ascetic.isSelected() && !chk_client.isSelected()) || qrTask != null);
+				&& !chk_client_ascetic.isSelected() && !chk_agent.isSelected()) || qrTask != null);
 	};
 
 	private ChangeListener<Boolean> refreshClient = (ObservableValue<? extends Boolean> p, Boolean o, Boolean n) -> {
@@ -141,12 +140,12 @@ public class MainController {
 		chk_server.selectedProperty().addListener(refreshScene);
 		chk_client_lifegem.selectedProperty().addListener(refreshScene);
 		chk_client_ascetic.selectedProperty().addListener(refreshScene);
-		chk_client.selectedProperty().addListener(refreshClient);
+		chk_agent.selectedProperty().addListener(refreshClient);
 
 		pane_server.expandedProperty().bindBidirectional(chk_server.selectedProperty());
 		pane_client_lifegem.expandedProperty().bindBidirectional(chk_client_lifegem.selectedProperty());
 		pane_client_ascetic.expandedProperty().bindBidirectional(chk_client_ascetic.selectedProperty());
-		pane_client.expandedProperty().bindBidirectional(chk_client.selectedProperty());
+		pane_client.expandedProperty().bindBidirectional(chk_agent.selectedProperty());
 
 		banner.setImage(new Image(MainController.class.getResourceAsStream("/image/logo.png")));
 	}
@@ -181,38 +180,35 @@ public class MainController {
 		chk_server.selectedProperty().removeListener(refreshScene);
 		chk_client_lifegem.selectedProperty().removeListener(refreshScene);
 		chk_client_ascetic.selectedProperty().removeListener(refreshScene);
-		chk_client.selectedProperty().removeListener(refreshClient);
+		chk_agent.selectedProperty().removeListener(refreshClient);
 
 		chk_server.setDisable(true);
 		chk_client_lifegem.setDisable(true);
 		chk_client_ascetic.setDisable(true);
-		chk_client.setDisable(true);
+		chk_agent.setDisable(true);
 		btn_install.setDisable(true);
 
-		Main.PATH.evaluate().ifPresent(base -> {
-			// Add installer tasks to the queue
-			if (chk_client_lifegem.isSelected()) {
-				install(pane_client_lifegem, InstallTask.newClientLifegemTask(base.resolve("client-gui")));
-			} else {
-				pane_client_lifegem.setCollapsible(false);
-			}
-			if (chk_client_ascetic.isSelected()) {
-				install(pane_client_ascetic, InstallTask.newClientAsceticTask(base.resolve("client-cli")));
-			} else {
-				pane_client_ascetic.setCollapsible(false);
-			}
-			if (chk_server.isSelected()) {
-				install(pane_server,
-						InstallTask.newServerTask(base.resolve("server"), username.getText(), password.getText()));
-			} else {
-				pane_server.setCollapsible(false);
-			}
-			if (chk_client.isSelected()) {
-				install(pane_client, InstallTask.newClientTask(base.resolve("client"), client_config));
-			} else {
-				pane_client.setCollapsible(false);
-			}
-		});
+		// Add installer tasks to the queue
+		if (chk_client_lifegem.isSelected()) {
+			install(pane_client_lifegem, InstallTask.newClientLifegemTaskGui());
+		} else {
+			pane_client_lifegem.setCollapsible(false);
+		}
+		if (chk_client_ascetic.isSelected()) {
+			install(pane_client_ascetic, InstallTask.newClientAsceticTaskGui());
+		} else {
+			pane_client_ascetic.setCollapsible(false);
+		}
+		if (chk_server.isSelected()) {
+			install(pane_server, InstallTask.newServerTaskGui());
+		} else {
+			pane_server.setCollapsible(false);
+		}
+		if (chk_agent.isSelected()) {
+			install(pane_client, InstallTask.newAgentTaskGui());
+		} else {
+			pane_client.setCollapsible(false);
+		}
 
 		// The final task only runs if all previous tasks succeeded
 		service.execute(() -> {

@@ -11,8 +11,6 @@
 //=========================================================S A N D P O L I S==//
 package com.sandpolis.installer;
 
-import com.sandpolis.installer.task.CliInstallTask;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -22,82 +20,59 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-/**
- * This class is the entry point for Installer instances.
- *
- * @author cilki
- * @since 5.0.0
- */
 public final class Main {
 
-	/**
-	 * The version to install.
-	 */
-	public static final String VERSION = System.getProperty("version", "latest");
+	private static void help() {
+		System.out.println("""
+				--install-server
+				--install-client-desktop
+				--install-client-terminal
+				--install-agent
 
-	/**
-	 * The components to install.
-	 */
-	public static final String COMPONENTS = System.getProperty("components", "");
+				--uninstall-server
+				--uninstall-client-desktop
+				--uninstall-client-terminal
+				--uninstall-agent
 
-	/**
-	 * The installation path.
-	 */
-	public static final InstallPath PATH = InstallPath.of(System.getProperty("path"),
-			System.getProperty("user.home") + "/.sandpolis");
+				--chroot
 
-	/**
-	 * The desktop file install path.
-	 */
-	public static final InstallPath EXT_LINUX_DESKTOP = InstallPath.of(System.getProperty("ext.linux.desktop"),
-			"/usr/share/applications", System.getProperty("user.home") + "/.local/share/applications");
-
-	/**
-	 * The standard PATH on Linux.
-	 */
-	public static final InstallPath EXT_LINUX_PATH = InstallPath.of("/usr/bin", "/usr/local/sbin", "/usr/local/bin");
-
-	/**
-	 * The start menu install path.
-	 */
-	public static final InstallPath EXT_WINDOWS_START = InstallPath.of(System.getProperty("ext.windows.start"),
-			"C:/ProgramData/Microsoft/Windows/Start Menu/Programs",
-			System.getProperty("user.home") + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs");
-
-	/**
-	 * The desktop install path.
-	 */
-	public static final InstallPath EXT_WINDOWS_DESKTOP = InstallPath.of(System.getProperty("ext.windows.desktop"),
-			System.getProperty("user.home") + "/Desktop");
-
-	/**
-	 * The standard PATH on Windows.
-	 */
-	public static final InstallPath EXT_WINDOWS_PATH = InstallPath.of();
+				--help    Help menu
+				""");
+		System.exit(0);
+	}
 
 	public static void main(String[] args) throws Exception {
 
-		if (System.getProperty("path") != null) {
-			Path path = PATH.evaluate().get();
-			for (String component : COMPONENTS.split(",")) {
-				switch (component) {
-				case "server":
-					CliInstallTask.newServerTask(path, "admin", "password").call();
-					break;
-				case "client-gui":
-					CliInstallTask.newClientLifegemTask(path).call();
-					break;
-				case "client-cli":
-					CliInstallTask.newClientAsceticTask(path).call();
-					break;
-				}
-			}
-		} else {
+		if (args.length == 0) {
 			// Start GUI
 			new Thread(() -> Application.launch(UI.class)).start();
+			return;
 		}
+
+		Path root = Paths.get("/");
+		boolean install_server = false;
+
+		for (int i = 0; i < args.length; i++) {
+			switch (args[i]) {
+			case "--root":
+				if (++i >= args.length) {
+					throw new RuntimeException();
+				}
+				root = Paths.get(args[i]);
+				break;
+			case "--install-server":
+
+				break;
+			}
+		}
+
+		if (install_server) {
+			InstallTask.newServerTask(root).call();
+		}
+
 	}
 
 	/**

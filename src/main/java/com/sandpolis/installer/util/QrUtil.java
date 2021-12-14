@@ -32,11 +32,12 @@ import javafx.scene.shape.SVGPath;
 public class QrUtil {
 
 	public static Group buildQr(String token, ReadOnlyDoubleProperty width, ReadOnlyDoubleProperty height, Paint fill) {
-		try (var in = new ByteArrayInputStream(QrCode.encodeText(token, Ecc.HIGH).toSvgString(1).getBytes())) {
+		/*try (var in = new ByteArrayInputStream(QrCode.encodeText(token, Ecc.HIGH).toSvgString(1).getBytes())) {
 			return buildSvg(in, width, height, fill);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}
+		}*/
+		return null;
 	}
 
 	private static Group buildSvg(InputStream in, ReadOnlyDoubleProperty svgWidth, ReadOnlyDoubleProperty svgHeight,
