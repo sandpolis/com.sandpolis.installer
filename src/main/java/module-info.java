@@ -9,7 +9,7 @@
 //    https://mozilla.org/MPL/2.0                                             //
 //                                                                            //
 //=========================================================S A N D P O L I S==//
-module com.sandpolis.installer {
+open module com.sandpolis.installer {
 	exports com.sandpolis.installer.scene.main;
 	exports com.sandpolis.installer.util;
 	exports com.sandpolis.installer;

@@ -1,14 +1,12 @@
 //============================================================================//
 //                                                                            //
-//                Copyright © 2015 - 2020 Subterranean Security               //
+//                         Copyright © 2015 Sandpolis                         //
 //                                                                            //
 //  This source file is subject to the terms of the Mozilla Public License    //
 //  version 2. You may not use this file except in compliance with the MPL    //
-//  as published by the Mozilla Foundation at:                                //
+//  as published by the Mozilla Foundation.                                   //
 //                                                                            //
-//    https://mozilla.org/MPL/2.0                                             //
-//                                                                            //
-//=========================================================S A N D P O L I S==//
+//============================================================================//
 package com.sandpolis.installer.util;
 
 import java.io.ByteArrayInputStream;
@@ -32,11 +30,11 @@ import javafx.scene.shape.SVGPath;
 public class QrUtil {
 
 	public static Group buildQr(String token, ReadOnlyDoubleProperty width, ReadOnlyDoubleProperty height, Paint fill) {
-		/*try (var in = new ByteArrayInputStream(QrCode.encodeText(token, Ecc.HIGH).toSvgString(1).getBytes())) {
-			return buildSvg(in, width, height, fill);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}*/
+		/*
+		 * try (var in = new ByteArrayInputStream(QrCode.encodeText(token,
+		 * Ecc.HIGH).toSvgString(1).getBytes())) { return buildSvg(in, width, height,
+		 * fill); } catch (Exception e) { throw new RuntimeException(e); }
+		 */
 		return null;
 	}
 
