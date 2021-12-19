@@ -1,13 +1,12 @@
 //============================================================================//
 //                                                                            //
-//                         Copyright © 2015 Sandpolis                         //
+//            Copyright © 2015 - 2022 Sandpolis Software Foundation           //
 //                                                                            //
 //  This source file is subject to the terms of the Mozilla Public License    //
-//  version 2. You may not use this file except in compliance with the MPL    //
-//  as published by the Mozilla Foundation.                                   //
+//  version 2. You may not use this file except in compliance with the MPLv2. //
 //                                                                            //
 //============================================================================//
-package com.sandpolis.installer;
+package org.s7s.instance.installer.java;
 
 import static java.nio.file.attribute.PosixFilePermission.GROUP_EXECUTE;
 import static java.nio.file.attribute.PosixFilePermission.GROUP_READ;
@@ -25,11 +24,11 @@ import java.nio.file.Paths;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sandpolis.core.foundation.S7SJarFile;
-import com.sandpolis.core.foundation.S7SMavenArtifact;
-import com.sandpolis.core.foundation.S7SSystem;
-import com.sandpolis.core.integration.systemd.Systemctl;
-import com.sandpolis.core.integration.systemd.SystemdService;
+import org.s7s.core.foundation.S7SJarFile;
+import org.s7s.core.foundation.S7SMavenArtifact;
+import org.s7s.core.foundation.S7SSystem;
+import org.s7s.core.integration.systemd.Systemctl;
+import org.s7s.core.integration.systemd.SystemdService;
 
 import javafx.concurrent.Task;
 
@@ -95,37 +94,37 @@ public class InstallTask extends Task<Void> {
 	}
 
 	public static InstallTask newServerTask(Path root) {
-		return new InstallTask(false, S7SMavenArtifact.of("com.sandpolis", "server.vanilla", null), root);
+		return new InstallTask(false, S7SMavenArtifact.of("org.s7s", "server.java", null), root);
 	}
 
 	public static InstallTask newServerTaskGui() {
-		return new InstallTask(true, S7SMavenArtifact.of("com.sandpolis", "server.vanilla", null), Paths.get("/"));
+		return new InstallTask(true, S7SMavenArtifact.of("org.s7s", "server.java", null), Paths.get("/"));
 	}
 
 	public static InstallTask newClientLifegemTask(Path root) {
-		return new InstallTask(false,
-				S7SMavenArtifact.of("com.sandpolis", "client.lifegem", null, getPlatformClassifier()), root);
+		return new InstallTask(false, S7SMavenArtifact.of("org.s7s", "client.lifegem", null, getPlatformClassifier()),
+				root);
 	}
 
 	public static InstallTask newClientLifegemTaskGui() {
-		return new InstallTask(true,
-				S7SMavenArtifact.of("com.sandpolis", "client.lifegem", null, getPlatformClassifier()), Paths.get("/"));
+		return new InstallTask(true, S7SMavenArtifact.of("org.s7s", "client.lifegem", null, getPlatformClassifier()),
+				Paths.get("/"));
 	}
 
 	public static InstallTask newClientAsceticTask(Path root) {
-		return new InstallTask(false, S7SMavenArtifact.of("com.sandpolis", "client.ascetic", null), root);
+		return new InstallTask(false, S7SMavenArtifact.of("org.s7s", "client.ascetic", null), root);
 	}
 
 	public static InstallTask newClientAsceticTaskGui() {
-		return new InstallTask(true, S7SMavenArtifact.of("com.sandpolis", "client.ascetic", null), Paths.get("/"));
+		return new InstallTask(true, S7SMavenArtifact.of("org.s7s", "client.ascetic", null), Paths.get("/"));
 	}
 
 	public static InstallTask newAgentTask(Path root) {
-		return new InstallTask(false, S7SMavenArtifact.of("com.sandpolis", "agent.kilo", null), root);
+		return new InstallTask(false, S7SMavenArtifact.of("org.s7s", "agent.java", null), root);
 	}
 
 	public static InstallTask newAgentTaskGui() {
-		return new InstallTask(true, S7SMavenArtifact.of("com.sandpolis", "agent.kilo", null), Paths.get("/"));
+		return new InstallTask(true, S7SMavenArtifact.of("org.s7s", "agent.java", null), Paths.get("/"));
 	}
 
 	@Override
@@ -160,8 +159,8 @@ public class InstallTask extends Task<Void> {
 		}
 
 		// Get dependencies from executable
-		var tree = S7SJarFile.of(exe)
-				.getResource("/config/com.sandpolis.build.json", in -> new ObjectMapper().readTree(in)).get();
+		var tree = S7SJarFile.of(exe).getResource("/config/org.s7s.build.json", in -> new ObjectMapper().readTree(in))
+				.get();
 
 		long current = 0;
 		long total = tree.get("dependencies").size();
@@ -209,7 +208,7 @@ public class InstallTask extends Task<Void> {
 		}
 
 		switch (component.artifactId()) {
-		case "server.vanilla":
+		case "server.java":
 			if (Systemctl.isAvailable()) {
 				var service = SystemdService.of(config -> {
 					config.Type = SystemdService.Type.SIMPLE;

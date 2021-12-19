@@ -1,13 +1,12 @@
 //============================================================================//
 //                                                                            //
-//                         Copyright © 2015 Sandpolis                         //
+//            Copyright © 2015 - 2022 Sandpolis Software Foundation           //
 //                                                                            //
 //  This source file is subject to the terms of the Mozilla Public License    //
-//  version 2. You may not use this file except in compliance with the MPL    //
-//  as published by the Mozilla Foundation.                                   //
+//  version 2. You may not use this file except in compliance with the MPLv2. //
 //                                                                            //
 //============================================================================//
-package com.sandpolis.installer.scene.main;
+package org.s7s.instance.installer.java.scene.main;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -17,10 +16,10 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sandpolis.core.foundation.S7SRandom;
-import com.sandpolis.installer.InstallTask;
-import com.sandpolis.installer.util.CloudUtil;
-import com.sandpolis.installer.util.QrUtil;
+import org.s7s.core.foundation.S7SRandom;
+import org.s7s.instance.installer.java.InstallTask;
+import org.s7s.instance.installer.java.util.CloudUtil;
+import org.s7s.instance.installer.java.util.QrUtil;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;

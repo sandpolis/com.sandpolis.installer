@@ -1,10 +1,9 @@
 //============================================================================//
 //                                                                            //
-//                         Copyright © 2015 Sandpolis                         //
+//            Copyright © 2015 - 2022 Sandpolis Software Foundation           //
 //                                                                            //
 //  This source file is subject to the terms of the Mozilla Public License    //
-//  version 2. You may not use this file except in compliance with the MPL    //
-//  as published by the Mozilla Foundation.                                   //
+//  version 2. You may not use this file except in compliance with the MPLv2. //
 //                                                                            //
 //============================================================================//
 
@@ -13,20 +12,20 @@ import org.gradle.internal.os.OperatingSystem
 plugins {
 	id("java-library")
 	id("application")
-	id("com.sandpolis.build.module")
-	id("com.sandpolis.build.instance")
-	id("com.sandpolis.build.publish")
+	id("org.s7s.build.module")
+	id("org.s7s.build.instance")
+	id("org.s7s.build.publish")
 	id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
 application {
-	mainModule.set("com.sandpolis.installer")
-	mainClass.set("com.sandpolis.installer.Main")
+	mainModule.set("org.s7s.instance.installer.java")
+	mainClass.set("org.s7s.instance.installer.java.Main")
 }
 
 tasks.named<JavaExec>("run") {
 	environment.put("S7S_DEVELOPMENT_MODE", "true")
-	environment.put("S7S_LOG_LEVELS", "io.netty=WARN,java.util.prefs=OFF,com.sandpolis=TRACE")
+	environment.put("S7S_LOG_LEVELS", "io.netty=WARN,java.util.prefs=OFF,org.s7s=TRACE")
 }
 
 tasks.withType<Jar>() {
@@ -51,17 +50,17 @@ dependencies {
 	implementation("com.fasterxml.jackson.core:jackson-databind:2.12.4")
 
 	if (project.getParent() == null) {
-		implementation("com.sandpolis:core.foundation:+")
-		implementation("com.sandpolis:core.integration.pacman:+")
-		implementation("com.sandpolis:core.integration.systemd:+")
-		implementation("com.sandpolis:core.integration.apt:+")
-		implementation("com.sandpolis:core.integration.launchd:+")
+		implementation("org.s7s:core.foundation:+")
+		implementation("org.s7s:core.integration.pacman:+")
+		implementation("org.s7s:core.integration.systemd:+")
+		implementation("org.s7s:core.integration.apt:+")
+		implementation("org.s7s:core.integration.launchd:+")
 	} else {
-		implementation(project(":core:com.sandpolis.core.foundation"))
-		implementation(project(":core:integration:com.sandpolis.core.integration.pacman"))
-		implementation(project(":core:integration:com.sandpolis.core.integration.systemd"))
-		implementation(project(":core:integration:com.sandpolis.core.integration.apt"))
-		implementation(project(":core:integration:com.sandpolis.core.integration.launchd"))
+		implementation(project(":core:org.s7s.core.foundation"))
+		implementation(project(":core:integration:org.s7s.core.integration.pacman"))
+		implementation(project(":core:integration:org.s7s.core.integration.systemd"))
+		implementation(project(":core:integration:org.s7s.core.integration.apt"))
+		implementation(project(":core:integration:org.s7s.core.integration.launchd"))
 	}
 
 	if (OperatingSystem.current().isMacOsX()) {
