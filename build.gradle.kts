@@ -15,7 +15,7 @@ plugins {
 	id("org.s7s.build.module")
 	id("org.s7s.build.instance")
 	id("org.s7s.build.publish")
-	id("com.github.johnrengelman.shadow") version "7.1.0"
+	id("com.github.johnrengelman.shadow") version "7.1.1"
 }
 
 application {
