@@ -56,11 +56,11 @@ dependencies {
 		implementation("org.s7s:core.integration.apt:+")
 		implementation("org.s7s:core.integration.launchd:+")
 	} else {
-		implementation(project(":core:org.s7s.core.foundation"))
-		implementation(project(":core:integration:org.s7s.core.integration.pacman"))
-		implementation(project(":core:integration:org.s7s.core.integration.systemd"))
-		implementation(project(":core:integration:org.s7s.core.integration.apt"))
-		implementation(project(":core:integration:org.s7s.core.integration.launchd"))
+		implementation(project(":core:foundation"))
+		implementation(project(":core:ext:pacman"))
+		implementation(project(":core:ext:systemd"))
+		implementation(project(":core:ext:apt"))
+		implementation(project(":core:ext:launchd"))
 	}
 
 	if (OperatingSystem.current().isMacOsX()) {
