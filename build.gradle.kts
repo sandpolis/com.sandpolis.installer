@@ -41,7 +41,7 @@ dependencies {
 	testImplementation("org.testfx:testfx-core:4.0.16-alpha")
 	testImplementation("org.testfx:testfx-junit5:4.0.16-alpha")
 	testImplementation("org.testfx:openjfx-monocle:jdk-12.0.1+2")
-	testImplementation("org.awaitility:awaitility:4.0.1")
+	testImplementation("org.awaitility:awaitility:4.2.0")
 
 	// https://github.com/nayuki/QR-Code-generator
 	implementation("io.nayuki:qrcodegen:1.7.0")
