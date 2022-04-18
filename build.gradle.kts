@@ -44,7 +44,7 @@ dependencies {
 	testImplementation("org.awaitility:awaitility:4.0.1")
 
 	// https://github.com/nayuki/QR-Code-generator
-	implementation("io.nayuki:qrcodegen:1.7.0")
+	implementation("io.nayuki:qrcodegen:1.8.0")
 
 	// https://github.com/FasterXML/jackson-databind
 	implementation("com.fasterxml.jackson.core:jackson-databind:2.12.4")
